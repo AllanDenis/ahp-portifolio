@@ -1,0 +1,5 @@
+click==6.6
+pyaes==1.6.0
+pyDAL==16.8
+PyYAML==3.12
+weppy==0.7.9
