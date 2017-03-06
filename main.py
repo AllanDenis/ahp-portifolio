@@ -1,16 +1,5 @@
 import numpy as np
-from pprint import pprint
-
-
-def escala(lista):
-    menor, maior = min(lista), max(lista)
-    return np.array([(item - menor) / (maior - menor) for item in lista])
-
-def normaliza(lista):
-    soma = np.sum(lista)
-    for i in lista:
-        i /= soma
-
+from pprint import pprint   
 
 objetivo = ''
 criterios = []
