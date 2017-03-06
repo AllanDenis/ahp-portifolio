@@ -1,4 +1,16 @@
 import numpy as np
+from pprint import pprint
+
+
+def escala(lista):
+    menor, maior = min(lista), max(lista)
+    return np.array([(item - menor) / (maior - menor) for item in lista])
+
+def normaliza(lista):
+    soma = np.sum(lista)
+    for i in lista:
+        i /= soma
+
 
 objetivo = ''
 criterios = []
@@ -7,7 +19,7 @@ alternativas = []
 objetivo = input("Decisão a ser tomada: ")
 
 # Critérios
-entrada = input("Critérios considerados, separados por espaços: ").split()
+entrada = input("\nCritérios considerados, separados por espaços: ").split()
 for crit in entrada:
     criterios.append({
         'nome': crit,
@@ -15,7 +27,7 @@ for crit in entrada:
     })
 
 # Alternativas
-entrada = input("Alternativas disponíveis, separadas por espaços: ").split()
+entrada = input("\nAlternativas disponíveis, separadas por espaços: ").split()
 for alt in entrada:
     alternativas.append({
         'nome': alt,
@@ -25,25 +37,26 @@ for alt in entrada:
         ]
     })
 
+
 # Matriz alternativa x critério com colunas normalizadas
 matrizAltCrit = [alt['pesos'] for alt in alternativas]
-matrizAltCrit = np.array(matrizAltCrit).T
-for coluna in matrizAltCrit:
-    coluna /= sum(coluna)
-matrizAltCrit = matrizAltCrit.T
+matrizAltCrit = np.array(matrizAltCrit)
+matrizAltCrit /= matrizAltCrit.sum()
 
 # Critérios normalizadas
 rankingCriterios = [crit['peso'] for crit in criterios]
 rankingCriterios = np.array(rankingCriterios)
-rankingCriterios /= sum(rankingCriterios)
+rankingCriterios /= rankingCriterios.sum()
+assert(np.sum(rankingCriterios) == 1)
 
 # RESULTADO: ranking de alternativas
 rankingAlternativas = matrizAltCrit.dot(rankingCriterios)
-rankingAlternativas = zip([a['nome'] for a in alternativas], rankingCriterios)
-rankingAlternativas = sorted([(pontos,alt)
-                        for (alt,pontos) in rankingAlternativas],
+rankingAlternativas /= rankingAlternativas.sum()
+rankingAlternativas = zip([a['nome'] for a in alternativas], rankingAlternativas)
+rankingAlternativas = sorted([(pontos,a)
+                        for (a,pontos) in rankingAlternativas],
                         reverse=True)
 
-print("Ranking de alternativas para %s: " % objetivo)
+print("_" * 50 + "\nRanking de alternativas para %s: " % objetivo)
 for pontos, alt in rankingAlternativas:
     print("%s: %.1f%%" % (alt, pontos * 100))
